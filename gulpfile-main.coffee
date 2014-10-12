@@ -7,8 +7,6 @@ mainBowerFiles = require 'main-bower-files'
 gulp = require 'gulp'
 gutil = require 'gulp-util'
 clean = require 'gulp-clean'
-concat = require 'gulp-concat'
-rename = require 'gulp-rename'
 # SERVER
 connect = require 'gulp-connect'
 open = require 'gulp-open'
