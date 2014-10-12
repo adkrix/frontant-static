@@ -1,0 +1,3 @@
+$ ->
+  $('.example').show()
+  $('.example').show()

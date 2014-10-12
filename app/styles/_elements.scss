@@ -1,0 +1,5 @@
+.example{
+  @include linear-gradient(to top, red, orange);
+  @include box-sizing(border-box);
+}
+

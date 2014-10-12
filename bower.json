@@ -1,0 +1,26 @@
+{
+  "name": "frontant-static",
+  "version": "0.1.0",
+  "dependencies": {
+    "font-awesome": "4.2.0",
+    "jquery": "2.1.1",
+    "bootstrap-sass-twbs": "3.2.0"
+  },
+  "overrides": {
+    "font-awesome": {
+      "main": [
+        "fonts/fontawesome-webfont.eot",
+        "fonts/fontawesome-webfont.svg",
+        "fonts/fontawesome-webfont.ttf",
+        "fonts/fontawesome-webfont.woff"
+      ]
+    },
+    "jquery": {
+      "main": ["dist/jquery.js"]
+    },
+    "bootstrap-sass-twbs": {
+      "main": ["assets/javascripts/bootstrap.js"]
+    }
+  }
+
+}
