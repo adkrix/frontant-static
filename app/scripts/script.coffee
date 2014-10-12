@@ -1,3 +1,2 @@
 $ ->
-  $('.example').show()
-  $('.example').show()
+  $('.example:eq(1)').show(2000)

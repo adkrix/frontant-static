@@ -11,6 +11,7 @@ concat = require 'gulp-concat'
 rename = require 'gulp-rename'
 # SERVER
 connect = require 'gulp-connect'
+open = require 'gulp-open'
 # CSS
 scss = require 'gulp-sass'
 bourbon = require 'node-bourbon'
@@ -24,7 +25,7 @@ injectString = require 'gulp-inject-string'
 
 paths =
   fonts: ['./app/fonts/**/*.*']
-  scss: ['./app/styles/**/*.scss']
+  scss: ['./app/styles/**/*.scss','./app/styles/**/*.sass']
   coffee: ['./app/scripts/**/*.coffee']
   views: ['./app/views/*.jade']
   views_all: ['./app/views/**/*.jade']
@@ -45,6 +46,11 @@ options = ->
     imagePath: '../images'
     includePaths: bourbon.includePaths
     outputStyle: if dev then 'expanded' else 'compressed'
+  server:
+    port: 9001,
+    host: 'localhost'
+    root: 'www'
+    livereload: true
 
 on_error = (error) ->
   gutil.beep()
@@ -86,8 +92,8 @@ gulp.task 'jade', ->
     .pipe jade pretty: true
     .pipe injectString.after('<!--inject-css-->', '    <!-- inject:css -->\n    <!-- endinject -->\n')
     .pipe injectString.after('<!--inject-js-->', '    <!-- inject:js -->\n    <!-- endinject -->\n')
-    .pipe inject gulp.src(paths.inject_css, {read: false}), { ignorePath: '../www', relative: true }
-    .pipe inject gulp.src(paths.inject_js), { ignorePath: '../www', relative: true }
+    .pipe inject gulp.src(paths.inject_css, {read: false}), { ignorePath: 'www', relative: false }
+    .pipe inject gulp.src(paths.inject_js), { ignorePath: 'www', relative: false }
     .pipe gulp.dest './www'
     .pipe connect.reload()
 
@@ -115,11 +121,11 @@ gulp.task 'watch', ['build'], ->
   gulp.watch paths.fonts, ['fonts']
 
 gulp.task 'server', ->
-  connect.server
-    port: 9001,
-    host: 'localhost'
-    root: 'www'
-    livereload: true
+  opts = options().server
+  connect.server opts
+  gutil.log 'open link'
+  gulp.src("./www/about.html")
+    .pipe open("", url: "http://#{opts.host}:#{opts.port}")
 
 # GLOBAL TASKS
 gulp.task 'default', ['build']
