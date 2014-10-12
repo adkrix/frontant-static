@@ -1,5 +1,53 @@
-.example{
-  @include linear-gradient(to top, red, orange);
-  @include box-sizing(border-box);
+.min460{
+  min-height: 460px;
 }
 
+.main-logo{
+  @include size(100%, 360px);
+  background: url("/images/frontant.png") center no-repeat;
+  background-size: contain;
+  margin: 30px auto;
+}
+
+.bar-logo{
+  @include size(100%, 360px);
+  background: url("/images/frontant.png") center no-repeat;
+  background-size: contain;
+}
+
+@media (max-width: 600px) {
+  .main-logo{
+    height: 320px;
+  }
+}
+
+@media (max-width: 550px) {
+  .main-logo{
+    height: 280px;
+  }
+}
+
+@media (max-width: 490px) {
+  .main-logo{
+    height: 240px;
+  }
+}
+
+@media (max-width: 430px) {
+  .main-logo{
+    height: 200px;
+  }
+}
+
+footer{
+  @include size(100%, 120px);
+  @include linear-gradient(to top, #444, #428BCA);
+  @include box-sizing(border-box);
+  padding: 30px;
+  margin-top: 20px;
+  color: #ffffff;
+  &:after{
+    display: block;
+    content: '\A9  2014 FrontAnt';
+  }
+}

@@ -1,1 +1,26 @@
-header.text-center Header
+nav.navbar.navbar-default(role='navigation')
+  .container
+    // Brand and toggle get grouped for better mobile display
+    .navbar-header
+      button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='/') FrontAnt (static)
+    // Collect the nav links, forms, and other content for toggling
+    #bs-example-navbar-collapse-1.collapse.navbar-collapse
+      ul.nav.navbar-nav
+        li(): a(href='about.html') About
+        li.dropdown
+          a.dropdown-toggle(href='#', data-toggle='dropdown')
+            | Components
+            span.caret
+          ul.dropdown-menu(role='menu')
+            li: a(href='http://sass-lang.com/documentation/file.SASS_REFERENCE.html' target='_blank') SCSS/SASS for simple CSS
+            li: a(href='http://coffeescript.org/' target='_blank') CoffeeScript for free JS
+            li: a(href='http://jade-lang.com/' target='_blank') Jade for light HTML
+            li.divider
+            li: a(href='http://bourbon.io/docs/' target='_blank') Bourbon mixin collection
+      ul.nav.navbar-nav.navbar-right
+        li: a(href='contacts.html') Contacts

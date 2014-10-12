@@ -4,4 +4,44 @@ html
   body
     include ./partials/header
 
+    .container
+      .row
+        .col-md-8
+          h3#init Init
+          ul.list-group
+            li.list-group-item npm install
+            li.list-group-item bower install
+
+          h3#components Components
+          ul.list-group
+            li.list-group-item
+              | SCSS/SASS for simple CSS -
+              a(href='http://sass-lang.com/documentation/file.SASS_REFERENCE.html#css_extensions') SASS Doc
+            li.list-group-item
+              | Bourbon mixin collection -
+              a(href='http://bourbon.io/docs/') Bourbon Doc
+            li.list-group-item
+              | CoffeeScript for free JS -
+              a(href='http://coffeescript.org/') CoffeeScript Doc
+            li.list-group-item
+              | Jade for light HTML -
+              a(href='http://jade-lang.com/') Jade Doc
+
+          h3#libs Libs
+          ul.list-group
+            li.list-group-item
+              | Awesome font icons -
+              a(href='http://fortawesome.github.io/Font-Awesome/icons/') Icon List
+            li.list-group-item
+              | jQuery -
+              a(href='http://api.jquery.com/') jQuery Doc
+            li.list-group-item
+              | Bootstrap for Power Design -
+              a(href='http://getbootstrap.com/css/') Bootstrap Doc
+        .col-md-4
+          .panel.panel-danger
+            .panel-heading FrontAnt Static
+            .panel-body
+              .bar-logo
+
     include ./partials/footer

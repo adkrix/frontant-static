@@ -1,0 +1,26 @@
+doctype html5
+html
+  include ./partials/head
+  body
+    include ./partials/header
+    .container
+      .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2.col-lg-6.col-lg-offset-3.min460
+          p Send your message here
+          form(role='form')
+            .form-group
+              label(for='exampleInputPassword1') Your Name
+              input#exampleInputName1.form-control(type='text', placeholder='Enter Your Name')
+            .form-group
+              label(for='exampleInputEmail1') Your Email
+              input#exampleInputEmail1.form-control(type='email', placeholder='Enter Your Email')
+            .form-group
+              label(for='exampleInputText1') Your Message
+              textarea#exampleInputText1.form-control(placeholder='Enter Your Message')
+            .checkbox
+              label
+                input(type='checkbox')
+                | Check me out
+            button.btn.btn-default(type='submit') Send
+
+    include ./partials/footer
