@@ -21,6 +21,21 @@ jade = require 'gulp-jade'
 inject = require 'gulp-inject'
 injectString = require 'gulp-inject-string'
 
+dir = (path = '') ->
+
+  mkdir = (path) ->
+    if dev
+      "./www/#{path}"
+    else
+      "./dist/#{path}"
+
+  if Array.isArray(path)
+    path.map mkdir
+  else
+    mkdir path
+
+
+
 paths =
   fonts: [
     './app/fonts/**/*.*'
@@ -41,13 +56,13 @@ paths =
     './app/images/**/*.*'
   ]
   inject_js: [
-    './www/components/jquery.js'
-    './www/components/**/*.js'
-    './www/scripts/**/*.js'
+    'components/jquery/dist/jquery.js'
+    'components/**/*.js'
+    'scripts/**/*.js'
   ]
   inject_css: [
-    './www/components/**/*.css'
-    './www/styles/**/*.css'
+    'components/**/*.css'
+    'styles/**/*.css'
   ]
 
 options = ->
@@ -62,8 +77,10 @@ options = ->
     root: 'www'
     livereload: true
   inject:
-    ignorePath: 'www'
+    ignorePath: if dev then 'www' else 'dist'
     relative: false
+  mainBowerFiles:
+    base: 'bower_components'
 
 on_error = (error) ->
   gutil.beep()
@@ -75,18 +92,18 @@ gulp.task 'dev', ->
   dev = true
 
 gulp.task 'clean', ->
-  gulp.src './www', {read: false}
+  gulp.src dir(), {read: false}
   .pipe clean(force: true)
 
 gulp.task 'bower', ->
-  gulp.src mainBowerFiles()
-    .pipe gulp.dest('./www/components')
+  gulp.src mainBowerFiles(), options().mainBowerFiles
+    .pipe gulp.dest(dir('components'))
     .on 'error', on_error
 
 gulp.task 'scss', (done) ->
   gulp.src paths.scss
     .pipe scss(options().scss)
-    .pipe gulp.dest('./www/styles/')
+    .pipe gulp.dest(dir('styles'))
     .pipe connect.reload()
     .on 'end', done
   return
@@ -96,18 +113,18 @@ gulp.task 'coffee', ->
     .pipe sourcemaps.init()
     .pipe coffee(bare: true)
     .on 'error', on_error
-    .pipe sourcemaps.write('../maps')
-    .pipe gulp.dest('./www/scripts')
+    .pipe gulp.dest(dir('scripts'))
+    .pipe sourcemaps.write('../maps/')
     .pipe connect.reload()
 
 gulp.task 'images', ->
   gulp.src paths.images
-    .pipe gulp.dest('./www/images/')
+    .pipe gulp.dest(dir('images'))
     .pipe connect.reload()
 
 gulp.task 'fonts', ->
   gulp.src paths.fonts
-    .pipe gulp.dest('./www/fonts/')
+    .pipe gulp.dest(dir('fonts'))
     .pipe connect.reload()
 
 gulp.task 'jade', ->
@@ -115,9 +132,9 @@ gulp.task 'jade', ->
     .pipe jade(pretty: true)
     .pipe injectString.before('</head>', '    <!-- inject:css -->\n    <!-- endinject -->\n')
     .pipe injectString.before('</body>', '    <!-- inject:js -->\n    <!-- endinject -->\n')
-    .pipe inject(gulp.src(paths.inject_css, {read: false}), options().inject)
-    .pipe inject(gulp.src(paths.inject_js,  {read: false}), options().inject)
-    .pipe gulp.dest('./www')
+    .pipe inject(gulp.src(dir(paths.inject_css), {read: false}), options().inject)
+    .pipe inject(gulp.src(dir(paths.inject_js), {read: false}), options().inject)
+    .pipe gulp.dest(dir())
     .pipe connect.reload()
 
 gulp.task 'build', (callback) ->
@@ -133,7 +150,6 @@ gulp.task 'watch', ['build'], ->
 gulp.task 'server', ->
   opts = options().server
   connect.server opts
-  gutil.log 'open link'
   gulp.src './www/index.html'
     .pipe open("", url: "http://#{opts.host}:#{opts.port}")
 

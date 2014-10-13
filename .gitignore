@@ -1,8 +1,8 @@
 .DS_Store
 .bower
 .idea/
-.sass-cache
 .tmp
-app/bower_components
+bower_components/
+dist/
 node_modules/
 www/
