@@ -22,15 +22,27 @@ inject = require 'gulp-inject'
 injectString = require 'gulp-inject-string'
 
 paths =
-  fonts: ['./app/fonts/**/*.*']
-  scss: ['./app/styles/**/*.scss','./app/styles/**/*.sass']
-  coffee: ['./app/scripts/**/*.coffee']
-  views: ['./app/views/*.jade']
-  views_all: ['./app/views/**/*.jade']
-  images: ['./app/images/**/*.*']
+  fonts: [
+    './app/fonts/**/*.*'
+  ]
+  scss: [
+    './app/styles/**/*.scss' 
+  ]
+  coffee: [
+    './app/scripts/**/*.coffee'
+  ]
+  views: [
+    './app/views/*.jade'
+  ]
+  views_all: [
+    './app/views/**/*.jade'
+  ]
+  images: [
+    './app/images/**/*.*'
+  ]
   inject_js: [
-    './www/components/jquery.js',
-    './www/components/**/*.js',
+    './www/components/jquery.js'
+    './www/components/**/*.js'
     './www/scripts/**/*.js'
   ]
   inject_css: [
@@ -49,6 +61,9 @@ options = ->
     host: 'localhost'
     root: 'www'
     livereload: true
+  inject:
+    ignorePath: 'www'
+    relative: false
 
 on_error = (error) ->
   gutil.beep()
@@ -56,22 +71,22 @@ on_error = (error) ->
 
 
 # TASKS
+gulp.task 'dev', ->
+  dev = true
+
 gulp.task 'clean', ->
   gulp.src './www', {read: false}
-  .pipe clean force: true
+  .pipe clean(force: true)
 
 gulp.task 'bower', ->
   gulp.src mainBowerFiles()
-    .pipe gulp.dest './www/components'
+    .pipe gulp.dest('./www/components')
     .on 'error', on_error
-
-gulp.task 'dev', ->
-  dev = true
 
 gulp.task 'scss', (done) ->
   gulp.src paths.scss
     .pipe scss(options().scss)
-    .pipe gulp.dest './www/styles/'
+    .pipe gulp.dest('./www/styles/')
     .pipe connect.reload()
     .on 'end', done
   return
@@ -79,37 +94,34 @@ gulp.task 'scss', (done) ->
 gulp.task 'coffee', ->
   gulp.src paths.coffee
     .pipe sourcemaps.init()
-    .pipe coffee {bare: true}
+    .pipe coffee(bare: true)
     .on 'error', on_error
-    .pipe sourcemaps.write '../maps'
-    .pipe gulp.dest './www/scripts'
-    .pipe connect.reload()
-
-gulp.task 'jade', ->
-  gulp.src paths.views
-    .pipe jade pretty: true
-    .pipe injectString.after('<!--inject-css-->', '    <!-- inject:css -->\n    <!-- endinject -->\n')
-    .pipe injectString.after('<!--inject-js-->', '    <!-- inject:js -->\n    <!-- endinject -->\n')
-    .pipe inject gulp.src(paths.inject_css, {read: false}), { ignorePath: 'www', relative: false }
-    .pipe inject gulp.src(paths.inject_js), { ignorePath: 'www', relative: false }
-    .pipe gulp.dest './www'
+    .pipe sourcemaps.write('../maps')
+    .pipe gulp.dest('./www/scripts')
     .pipe connect.reload()
 
 gulp.task 'images', ->
   gulp.src paths.images
-    .pipe gulp.dest './www/images/'
+    .pipe gulp.dest('./www/images/')
     .pipe connect.reload()
 
 gulp.task 'fonts', ->
   gulp.src paths.fonts
-    .pipe gulp.dest './www/fonts/'
+    .pipe gulp.dest('./www/fonts/')
+    .pipe connect.reload()
+
+gulp.task 'jade', ->
+  gulp.src paths.views
+    .pipe jade(pretty: true)
+    .pipe injectString.before('</head>', '    <!-- inject:css -->\n    <!-- endinject -->\n')
+    .pipe injectString.before('</body>', '    <!-- inject:js -->\n    <!-- endinject -->\n')
+    .pipe inject(gulp.src(paths.inject_css, {read: false}), options().inject)
+    .pipe inject(gulp.src(paths.inject_js,  {read: false}), options().inject)
+    .pipe gulp.dest('./www')
     .pipe connect.reload()
 
 gulp.task 'build', (callback) ->
-  runSequence 'clean', 'bower',
-    ['scss', 'coffee', 'images', 'fonts'],
-    'jade',
-    callback
+  runSequence 'clean', 'bower', ['scss', 'coffee', 'images', 'fonts'], 'jade', callback
 
 gulp.task 'watch', ['build'], ->
   gulp.watch paths.scss, ['scss']
@@ -122,7 +134,7 @@ gulp.task 'server', ->
   opts = options().server
   connect.server opts
   gutil.log 'open link'
-  gulp.src("./www/about.html")
+  gulp.src './www/index.html'
     .pipe open("", url: "http://#{opts.host}:#{opts.port}")
 
 # GLOBAL TASKS
