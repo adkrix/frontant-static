@@ -1,6 +1,7 @@
 dev = false
 root_dev = 'www'
 root_prod = 'dist'
+root_archives = 'archives'
 
 # ORDER OF TASKS
 runSequence = require 'run-sequence'
@@ -11,6 +12,8 @@ gulp = require 'gulp'
 gutil = require 'gulp-util'
 clean = require 'gulp-clean'
 concat = require 'gulp-concat'
+zip = require 'gulp-zip'
+
 # SERVER
 connect = require 'gulp-connect'
 open = require 'gulp-open'
@@ -161,9 +164,21 @@ gulp.task 'server', ->
   gulp.src "./#{root_dev}/index.html"
     .pipe open("", url: "http://#{opts.host}:#{opts.port}")
 
+
+gulp.task 'zipping', ->
+  pad = (n) -> ("0" + n).slice(-2)
+  d = new Date()
+  fname = "#{d.getFullYear()}-#{pad(d.getMonth()+1)}-#{pad(d.getDate())}_"
+  fname += "#{pad(d.getHours())}-#{pad(d.getMinutes())}-#{pad(d.getSeconds())}.zip"
+  gulp.src("#{root_prod}/**/*.*")
+    .pipe(zip(fname))
+    .pipe(gulp.dest(root_archives))
+
 # GLOBAL TASKS
 gulp.task 'default', ['build']
 
 gulp.task 'serve', (callback) ->
   runSequence 'dev', 'watch', 'server', callback
 
+gulp.task 'zip', (callback) ->
+  runSequence 'build', 'zipping', callback
