@@ -1,4 +1,7 @@
 dev = false
+root_dev = 'www'
+root_prod = 'dist'
+
 # ORDER OF TASKS
 runSequence = require 'run-sequence'
 # components
@@ -7,6 +10,7 @@ mainBowerFiles = require 'main-bower-files'
 gulp = require 'gulp'
 gutil = require 'gulp-util'
 clean = require 'gulp-clean'
+concat = require 'gulp-concat'
 # SERVER
 connect = require 'gulp-connect'
 open = require 'gulp-open'
@@ -16,25 +20,21 @@ bourbon = require 'node-bourbon'
 # JAVASCRIPT
 coffee = require 'gulp-coffee'
 sourcemaps = require 'gulp-sourcemaps'
+uglify = require 'gulp-uglify'
+
 # HTML
 jade = require 'gulp-jade'
 inject = require 'gulp-inject'
 injectString = require 'gulp-inject-string'
 
-dir = (path = '') ->
+root = ->
+  if dev then root_dev else root_prod
 
-  mkdir = (path) ->
-    if dev
-      "./www/#{path}"
-    else
-      "./dist/#{path}"
-
-  if Array.isArray(path)
-    path.map mkdir
+base = (paths = '') ->
+  if Array.isArray(paths)
+    paths.map (path) -> "./#{root()}/#{path}"
   else
-    mkdir path
-
-
+    "./#{root()}/#{paths}"
 
 paths =
   fonts: [
@@ -65,19 +65,24 @@ paths =
     'styles/**/*.css'
   ]
 
+sassIncludePaths = [].concat(
+  bourbon.includePaths,
+  './bower_components/bootstrap-sass-twbs/assets/stylesheets/'
+)
+
 options = ->
   scss:
     errLogToConsole: true
     imagePath: '../images'
-    includePaths: bourbon.includePaths
+    includePaths: sassIncludePaths
     outputStyle: if dev then 'expanded' else 'compressed'
   server:
     port: 9001,
     host: 'localhost'
-    root: 'www'
+    root: root_dev
     livereload: true
   inject:
-    ignorePath: if dev then 'www' else 'dist'
+    ignorePath: root()
     relative: false
   mainBowerFiles:
     base: 'bower_components'
@@ -92,39 +97,42 @@ gulp.task 'dev', ->
   dev = true
 
 gulp.task 'clean', ->
-  gulp.src dir(), {read: false}
+  gulp.src base(), {read: false}
   .pipe clean(force: true)
 
 gulp.task 'bower', ->
   gulp.src mainBowerFiles(), options().mainBowerFiles
-    .pipe gulp.dest(dir('components'))
+    .pipe gulp.dest(base('components'))
     .on 'error', on_error
 
 gulp.task 'scss', (done) ->
   gulp.src paths.scss
     .pipe scss(options().scss)
-    .pipe gulp.dest(dir('styles'))
+    .pipe gulp.dest(base('styles'))
     .pipe connect.reload()
     .on 'end', done
   return
 
 gulp.task 'coffee', ->
   gulp.src paths.coffee
-    .pipe sourcemaps.init()
+    .pipe if dev then sourcemaps.init() else gutil.noop()
     .pipe coffee(bare: true)
     .on 'error', on_error
-    .pipe gulp.dest(dir('scripts'))
-    .pipe sourcemaps.write('../maps/')
+    # production: js to one file and uglify
+    .pipe if dev then gutil.noop() else concat('app.js', {newLine: ';'})
+    .pipe if dev then gutil.noop() else uglify()
+    .pipe if dev then sourcemaps.write('../maps/') else gutil.noop()
+    .pipe gulp.dest(base('scripts'))
     .pipe connect.reload()
 
 gulp.task 'images', ->
   gulp.src paths.images
-    .pipe gulp.dest(dir('images'))
+    .pipe gulp.dest(base('images'))
     .pipe connect.reload()
 
 gulp.task 'fonts', ->
   gulp.src paths.fonts
-    .pipe gulp.dest(dir('fonts'))
+    .pipe gulp.dest(base('fonts'))
     .pipe connect.reload()
 
 gulp.task 'jade', ->
@@ -132,9 +140,9 @@ gulp.task 'jade', ->
     .pipe jade(pretty: true)
     .pipe injectString.before('</head>', '    <!-- inject:css -->\n    <!-- endinject -->\n')
     .pipe injectString.before('</body>', '    <!-- inject:js -->\n    <!-- endinject -->\n')
-    .pipe inject(gulp.src(dir(paths.inject_css), {read: false}), options().inject)
-    .pipe inject(gulp.src(dir(paths.inject_js), {read: false}), options().inject)
-    .pipe gulp.dest(dir())
+    .pipe inject(gulp.src(base(paths.inject_css), {read: false}), options().inject)
+    .pipe inject(gulp.src(base(paths.inject_js), {read: false}), options().inject)
+    .pipe gulp.dest(base())
     .pipe connect.reload()
 
 gulp.task 'build', (callback) ->
@@ -150,7 +158,7 @@ gulp.task 'watch', ['build'], ->
 gulp.task 'server', ->
   opts = options().server
   connect.server opts
-  gulp.src './www/index.html'
+  gulp.src "./#{root_dev}/index.html"
     .pipe open("", url: "http://#{opts.host}:#{opts.port}")
 
 # GLOBAL TASKS

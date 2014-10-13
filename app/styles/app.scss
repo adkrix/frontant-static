@@ -4,12 +4,11 @@
 @import "bourbon";
 
 // icons
-$fa-font-path: "/components";
 @import "../../bower_components/font-awesome/scss/font-awesome";
 
 // bootstrap configuring
 @import "bootstrap-variables";
-@import "../../bower_components/bootstrap-sass-twbs/assets/stylesheets/bootstrap";
+@import "bootstrap";
 @import "bootstrap-extend";
 
 
