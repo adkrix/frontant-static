@@ -1,7 +1,10 @@
 FrontAnt Static
 ===============================
-* npm install
-* bower install
+1. [install nodejs](http://nodejs.org/download/)
+1. `npm install -g bower`
+1. `npm install -g gulp`
+1. `npm install`
+1. `bower install`
 
 Components
 ----------
@@ -15,3 +18,10 @@ Libs
 * Awesome font icons - [Icon List](http://fortawesome.github.io/Font-Awesome/icons/)
 * jQuery - [jQuery Doc](http://api.jquery.com/)
 * Bootstrap for Power Design - [Bootstrap Doc](http://getbootstrap.com/css/)
+
+
+Usage
+-----------
+* gulp serve (for development)
+* gulp (build dist)
+

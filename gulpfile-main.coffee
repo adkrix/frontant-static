@@ -1,6 +1,7 @@
 dev = false
-root_dev = 'www'
-root_prod = 'dist'
+root_dev = '.tmp'
+root_test = '.tmp'
+root_build = 'dist'
 root_archives = 'archives'
 
 # ORDER OF TASKS
@@ -31,7 +32,7 @@ inject = require 'gulp-inject'
 injectString = require 'gulp-inject-string'
 
 root = ->
-  if dev then root_dev else root_prod
+  if dev then root_dev else root_build
 
 base = (paths = '') ->
   if Array.isArray(paths)
@@ -170,7 +171,7 @@ gulp.task 'zipping', ->
   d = new Date()
   fname = "#{d.getFullYear()}-#{pad(d.getMonth()+1)}-#{pad(d.getDate())}_"
   fname += "#{pad(d.getHours())}-#{pad(d.getMinutes())}-#{pad(d.getSeconds())}.zip"
-  gulp.src("#{root_prod}/**/*.*")
+  gulp.src("#{root_build}/**/*.*")
     .pipe(zip(fname))
     .pipe(gulp.dest(root_archives))
 
