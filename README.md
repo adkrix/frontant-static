@@ -1,8 +1,7 @@
 FrontAnt Static
 ===============================
 1. [install nodejs](http://nodejs.org/download/)
-1. `npm install -g bower`
-1. `npm install -g gulp`
+1. `npm install -g bower gulp`
 1. `npm install`
 1. `bower install`
 
